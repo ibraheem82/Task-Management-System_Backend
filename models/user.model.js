@@ -4,19 +4,16 @@ const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: [true, 'First name is required'],
       trim: true,
     },
 
     lastName: {
       type: String,
-      required: [true, 'Last name is required'],
       trim: true,
     },
 
     username: {
       type: String,
-      required: [true, 'Username is required'],
       unique: true,
       trim: true,
     },
@@ -24,15 +21,11 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
-      required: [true, 'Email is required'],
       lowercase: true, // Ensures emails are stored in lowercase
-      trim: true,
     },
 
     password: {
       type: String,
-      required: [true, 'Password is required'],
-      minlength: [6, 'Password must be at least 6 characters'],
       select: false, // Prevents password from being returned in queries
     },
 
