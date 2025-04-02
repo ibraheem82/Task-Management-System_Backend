@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import { hashPassword } from '../utils/helpers.js';
-
+import generateToken from '../utils/generateToken.js';
 
 
 const usersController = {
@@ -84,30 +84,6 @@ const usersController = {
     });
   }),
 
-  /**
-   * @desc    Get user profile
-   * @route   GET /api/users/profile
-   * @access  Private
-   */
-  getProfile: asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id).populate('createdTasks assignedTasks');
-
-    if (!user) {
-      res.status(404);
-      throw new Error('User not found');
-    }
-
-    res.json({
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      createdTasks: user.createdTasks,
-      assignedTasks: user.assignedTasks
-    });
-  }),
 
   /**
    * @desc    Update user profile
