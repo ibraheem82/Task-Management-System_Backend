@@ -7,5 +7,6 @@ const UsersRouter = express.Router();
 
 
 UsersRouter.post('/register', userValidators.signupValidator, validate, usersController.register);
+UsersRouter.post('/login', userValidators.loginValidator, validate, usersController.login);
 
 export default UsersRouter;
