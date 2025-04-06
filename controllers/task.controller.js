@@ -131,7 +131,10 @@ const tasksController = {
  }),
 
 
-
+/**
+   * Filter and sort tasks
+   * /api/tasks?status=To Do&priority=High&sortBy=dueDate
+   */
  updateTaskStatus: asyncHandler(async (req, res) => {
   const { taskId } = req.params;
   const { status } = req.body;
@@ -156,6 +159,26 @@ const tasksController = {
   await task.save();
 
   res.status(200).json({ success: true, message: "Task status updated successfully", data: task });
+}),
+
+filterAndSortTasks: asyncHandler(async (req, res) => {
+  const { status, priority, dueDate, sortBy = "dueDate", order = "asc" } = req.query;
+
+  const filter = {
+    createdBy: req.userAuth._id, // user can only see their tasks
+    ...(status && { status }), // Adds status filter if provided
+    ...(priority && { priority }), // Adds priority filter if provided
+    ...(dueDate && { dueDate: { $lte: new Date(dueDate) } }),
+  };
+
+  // Converts order ("asc" or "desc") into 1 (ascending) or -1 (descending) for MongoDB.
+  const sortOrder = order === "desc" ? -1 : 1;
+
+  // Fetches tasks matching the filter criteria.
+  // Sorts results by sortBy field (dueDate, priority, etc.) in the specified order.
+  const tasks = await Task.find(filter).sort({ [sortBy]: sortOrder });
+
+  res.status(200).json({ success: true, count: tasks.length, data: tasks });
 }),
 };
 
