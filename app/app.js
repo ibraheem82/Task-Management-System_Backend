@@ -5,6 +5,7 @@ import dbConnect from "../config/dbConnect.js";
 import { globalErrHandler, notFound } from '../middlewares/globalErrHandler.js';
 import UsersRouter from "../routes/user.routes.js";
 import TasksRouter from "../routes/task.routes.js";
+import AdminsRouter from "../routes/admin.routes.js";
 
 // * Database Connection.
 dbConnect();
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users/', UsersRouter);
 app.use('/api/tasks', TasksRouter);
+app.use('/api/admins/', AdminsRouter);
 
 
 
