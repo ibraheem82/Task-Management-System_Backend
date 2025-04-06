@@ -77,6 +77,55 @@ const tasksController = {
 
 
 
+  // Assign Task
+  // Only Admins or the creator of the task can assign it.
+  assignTask: asyncHandler(async (req, res) => {
+    const { taskId, userId } = req.params;
+
+    // Check if task exists
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({
+        success: false,
+        message: 'Task not found',
+      });
+    }
+  
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User to assign not found',
+      });
+    }
+  
+    // If task is already assigned, remove it from the old user's assignedTasks
+    if (task.assignedTo && task.assignedTo.toString() !== userId) {
+      await User.findByIdAndUpdate(task.assignedTo, {
+        $pull: { assignedTasks: task._id },
+      });
+    }
+  
+    // Assign task to the user
+    task.assignedTo = userId;
+    await task.save();
+  
+    // Add task to user's assignedTasks if not already there
+    if (!user.assignedTasks.includes(task._id)) {
+      user.assignedTasks.push(task._id);
+      await user.save();
+    }
+  
+    res.status(200).json({
+      success: true,
+      message: 'Task successfully assigned to user',
+      data: task,
+    });
+  }),
+
+
+
   updateTask: asyncHandler(async (req, res) => {
     const { taskId } = req.params;
     const task = await Task.findById(taskId);
